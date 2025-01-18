@@ -1,19 +1,30 @@
 import React, { useEffect, useState } from "react";
-import { getPost } from "../api/PostApi";
+import { deletePost, getPost } from "../api/PostApi";
 
 const Posts = () => {
   const [data, setData] = useState([]);
 
   const getPostData = async () => {
     const res = await getPost();
-    console.log(res.data);
     setData(res.data);
   };
 
-//   function to delete Post
-const handleDeletePost =()=> {
-
-}
+  //   function to delete Post
+  const handleDeletePost = async (id) => {
+    try {
+      const res = await deletePost(id);
+      if (res.status === 200) {
+        const newUpdatedPosts = data.filter((curPost) => {
+          return curPost.id !== id;
+        });
+        setData(newUpdatedPosts);
+      } else {
+        console.log("Failed to delete the post:", Response.status);
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
   useEffect(() => {
     getPostData();
