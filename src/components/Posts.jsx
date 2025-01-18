@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { deletePost, getPost } from "../api/PostApi";
+import Form from "./Form";
 
 const Posts = () => {
   const [data, setData] = useState([]);
@@ -31,6 +32,10 @@ const Posts = () => {
   }, []);
 
   return (
+    <div className="flex flex-col justify-center items-center">
+    <section className="w-[400px] md:w-[550px]">
+        <Form data={data} setData={setData}/>
+    </section>
     <section className="px-20 py-10">
       <ul className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-5">
         {data.map((currElem) => {
@@ -62,6 +67,7 @@ const Posts = () => {
         })}
       </ul>
     </section>
+    </div>
   );
 };
 
