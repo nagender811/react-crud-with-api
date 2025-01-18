@@ -1,11 +1,22 @@
-import React, { useState } from "react";
-import { PostData } from "../api/PostApi";
+import React, { useEffect, useState } from "react";
+import { PostData, updateData } from "../api/PostApi";
 
-const Form = ({ data, setData }) => {
+const Form = ({ data, setData, updateDataApi, setUpdateDataApi }) => {
   const [addData, setAddData] = useState({
     title: "",
     body: "",
   });
+
+  // get the updated Data and add into input field
+  useEffect(() => {
+    updateDataApi &&
+      setAddData({
+        title: updateDataApi.title || "",
+        body: updateDataApi.body || "",
+      });
+  }, [updateDataApi]);
+
+  const isEmpty = Object.keys(updateDataApi).length === 0;
 
   const handleInputChange = (e) => {
     const name = e.target.name;
@@ -29,18 +40,43 @@ const Form = ({ data, setData }) => {
     }
   };
 
+  const updatePostData = async () => {
+    try {
+      const res = await updateData(updateDataApi.id, addData);
+      console.log(res);
+
+      if (res.status === 200) {
+        setData((prev) => {
+          return prev.map((curElem) => {
+            return curElem.id === res.data.id ? res.data : curElem;
+          });
+        });
+
+        setAddData({ title: "", body: "" });
+        setUpdateDataApi({});
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   //   form submission
   const handleFormSubmit = (e) => {
     e.preventDefault();
-    addPostData();
+    const action = e.nativeEvent.submitter.value;
+    if (action == "Add") {
+      addPostData();
+    } else if (action === "Edit") {
+      updatePostData();
+    }
   };
 
   return (
     <form
       onSubmit={handleFormSubmit}
-      className="flex mt-10 gap-4 p-5 justify-center items-center bg-[#1F2937] rounded-lg"
+      className="flex flex-col sm:flex-row mt-10 gap-4 p-5 justify-center items-center bg-[#1F2937] rounded-lg"
     >
-      <div>
+      <div className="w-full">
         <label htmlFor="title"></label>
         <input
           type="text"
@@ -53,7 +89,7 @@ const Form = ({ data, setData }) => {
           onChange={handleInputChange}
         />
       </div>
-      <div>
+      <div className="w-full">
         <label htmlFor="news"></label>
         <input
           type="text"
@@ -67,10 +103,11 @@ const Form = ({ data, setData }) => {
         />
       </div>
       <button
-        className="py-2 px-6 bg-green-400 hover:bg-green-500 transition rounded"
+        className="w-full sm:w-20 py-2 px-6 bg-green-400 hover:bg-green-500 transition rounded"
         type="submit"
+        value={isEmpty ? "Add" : "Edit"}
       >
-        Add
+        {isEmpty ? "Add" : "Edit"}
       </button>
     </form>
   );
