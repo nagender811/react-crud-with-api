@@ -1,25 +1,12 @@
-import { useEffect } from 'react';
-import { getPost } from './api/PostApi';
-import './App.css'
+import "./App.css";
+import Posts from "./components/Posts";
 
 function App() {
-
-  const getPostData = async () => {
-    const res = await getPost()
-    console.log(res.data);
-    
-  }
-  
-  useEffect(() => {
-    getPostData()
-  }, [])
-
   return (
-    
-   <div>
-    Hello world
-   </div>
-  )
+    <div className="bg-[#17202a] text-white">
+      <Posts />
+    </div>
+  );
 }
 
-export default App
+export default App;
